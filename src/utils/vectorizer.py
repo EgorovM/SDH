@@ -18,7 +18,7 @@ class SentenceTfIdfVectorizer(AbstractVectorizer):
 
     @staticmethod
     def default() -> 'SentenceTfIdfVectorizer':
-        df = pd.read_csv('../events/data/replicas-events.csv', sep=';')
+        df = pd.read_csv('./events/data/replicas-events.csv', sep=';')
         vectorizer = TfidfVectorizer(ngram_range=(1, 2))
         vectorizer.fit(df['реплика'].values)
 

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 import joblib
 
 import numpy as np
@@ -26,19 +26,22 @@ class DiseasesClassification:
 
     def __init__(self) -> None:
         self.normalizer = CachedNormalizer()
-        self.vectorizer = joblib.load('../diseases/models/vectorizer.joblib')
-        self.clf = joblib.load('../diseases/models/disease_clf.joblib')
+        self.vectorizer = joblib.load('./diseases/models/vectorizer.joblib')
+        self.clf = joblib.load('./diseases/models/disease_clf.joblib')
 
     def text_to_vector(self, text: str) -> np.array:
         text = self.normalizer.normalize([text])
         vector = self.vectorizer.transform(text)
         return vector
 
-    def most_possible_disease(self, text: str) -> Disease:
+    def most_possible_disease(self, text: str) -> Tuple[Disease, float]:
         vector = self.text_to_vector(text)
-        label = self.clf.predict(vector)[0]
+        probas = self.clf.predict_proba(vector)[0]
+        label = self.clf.classes_[np.argmax(probas)]
+        probability = np.max(probas)
+        disease = self.diseases[label]
 
-        return self.diseases[label]
+        return disease, probability
 
     def find_symptom_to_ask(self, text: str, except_diseases: List[str] = []) -> Symptom:
         vector = self.text_to_vector(text)

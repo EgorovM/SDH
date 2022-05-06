@@ -1,3 +1,5 @@
+import pandas as pd
+
 from events import Event
 from replicas import ReplicasContainer, Replica
 
@@ -24,3 +26,14 @@ class EventClassifier:
         replica = Replica.from_sentence(sentence)
         event = self.event_classifier.classify(replica)
         return event
+
+    @staticmethod
+    def default():
+        df = pd.read_csv('./events/data/replicas-events.csv', sep=';')
+
+        replica_container = ReplicasContainer()
+        replica_container.extend(df['реплика'], df['класс'])
+
+        event_classifier = EventClassifier(replica_container)
+
+        return event_classifier
