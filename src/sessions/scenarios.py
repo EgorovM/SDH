@@ -1,9 +1,18 @@
 from abc import ABC, abstractmethod
+from itertools import compress
+
+from conversation import ConversationBot
 from diseases import Disease
 from diseases.classificators import DiseasesClassification
-from events.classifiers import EventClassifier
+from diseases.symptoms import SYMPTOMS_NAMES
 from events import Event
+from events.classifiers import EventClassifier
+from informations import QuestionAnswer
 from sessions.stages import Stages
+
+
+information_question_answer = QuestionAnswer.default()
+conversation_bot = ConversationBot()
 
 
 class Response:
@@ -27,7 +36,7 @@ class AbstractHandler(ABC):
 
     @property
     @abstractmethod
-    def code(self):
+    def code(self) -> str:
         return 'abstract_code'
 
 
@@ -50,40 +59,54 @@ class EventClassificationHandler(AbstractHandler):
     def get_human_readable(self, event: Event) -> str:
         # TODO: переписать, чтобы можно было вручную эти ответы добавлять
         if event == Event.OFF_TOP:
-            return 'Привет! Расскажи как дела?'
+            return 'Расскажите как дела?'
 
         if event == Event.CONSULTATION:
-            return 'Привет! Расскажи подробнее про свои симптомы, пожалуйста'
+            return 'Расскажите что вас беспокоит'
 
         if event == Event.INFORMATION:
-            # TODO: сразу взять ответ
-            return 'Привет! Сейчас найду...'
+            return 'Вот похожий случай:'
 
         return 'Извините, я вас не понимаю. Попробуйте, пожалуйста, уточнить вопрос :)'
 
     def handle(self, message: str) -> Response:
         event = self.classifier.predict(message)
+
+        if event == Event.INFORMATION:
+            return InformationHandler().handle(message)
+
         response = Response(
             message=self.get_human_readable(event),
             next_stage=self.next_stage(event)
         )
+
         return response
 
-    def code(self):
+    def code(self) -> str:
         return 'event_classification'
 
 
 class DiseaseClassificationHandler(AbstractHandler):
     def __init__(self):
         self.classifier = DiseasesClassification()
-        self.proba_threshold = 0.4
+        self.proba_threshold = 0.5
 
-    def get_human_readable(self, disease: Disease, probability: float) -> str:
+    def get_human_readable(self, message: str, disease: Disease, probability: float) -> str:
         if probability > self.proba_threshold:
-            return f'У вас кажется {disease.name} с вероятностью {round(probability, 3)}. Лечитесь, не болейте!'
+            # TODO: как бот пришел к такому выводу
+            symptoms_indexes = self.classifier.text_to_vector(message).toarray()[0]
+            symptoms = compress(SYMPTOMS_NAMES, symptoms_indexes)
 
-        # TODO: вычлинять симптомы и их справшивать
-        return f'Расскажите еще что-нибудь, пожалуйста.'
+            return (
+                f'У вас кажется {disease.name} с вероятностью {round(probability, 3)}.\n'
+                f'Вывод сделан на основе того, что у вас наблюдаются следующие симптомы: '
+                f'{", ".join([symptom for symptom in symptoms])}\n'
+                'Лечитесь, не болейте!'
+            )
+
+        symptom = self.classifier.find_symptom_to_ask(message)
+
+        return symptom.question
 
     def next_stage(self, probability) -> Stages:
         if probability > self.proba_threshold:
@@ -94,11 +117,55 @@ class DiseaseClassificationHandler(AbstractHandler):
     def handle(self, message: str) -> Response:
         disease, probability = self.classifier.most_possible_disease(message)
         response = Response(
-            message=self.get_human_readable(disease, probability),
+            message=self.get_human_readable(message, disease, probability),
             next_stage=self.next_stage(probability)
         )
         return response
 
-    def code(self):
+    def code(self) -> str:
         return 'disease_classification'
 
+
+class InformationHandler(AbstractHandler):
+    def __init__(self):
+        self.score_threshold = 0.95
+
+    def handle(self, message: str) -> Response:
+        response = Response(
+            message=self.get_human_readable(message),
+            next_stage=self.next_stage()
+        )
+        return response
+
+    def next_stage(self, *args, **kwargs) -> Stages:
+        return Stages.intro
+
+    def get_human_readable(self, message) -> str:
+        answer, score = information_question_answer.predict(message)
+
+        if score < self.score_threshold:
+            return 'Я пока не знаю ответа на этот вопрос. Попробуйте позвонить по номеру...'
+
+        return answer
+
+    def code(self) -> str:
+        return 'information'
+
+
+class ConversationBotHandler(AbstractHandler):
+    def handle(self, message: str) -> Response:
+        return Response(
+            message=self.get_human_readable(message),
+            next_stage=self.next_stage()
+        )
+
+    def next_stage(self, *args, **kwargs) -> Stages:
+        # TODO: придумать как выходить из бота
+        return Stages.off_top
+
+    def get_human_readable(self, message) -> str:
+        return conversation_bot.get_answer(message)
+
+    @property
+    def code(self) -> str:
+        return 'conversation_bot'

@@ -18,11 +18,17 @@ def hello_world():
 @app.route("/bot/", methods=["POST"])
 def bot():
     params = request.get_json()
-    message = params['message']
-    user_id = 1  # todo: from params
+    message = params.get('message', '')
+    action = params.get('action', None)
 
+    user_id = 1  # todo: from params
     user_session = get_user_session_by_id(db, user_id)
-    response = user_session.get_response(message)
+
+    if not action:
+        response = user_session.get_response(message)
+    else:
+        response = user_session.process_action(action)
+
     insert_user_session(db, user_session)
 
     return {'message': response}

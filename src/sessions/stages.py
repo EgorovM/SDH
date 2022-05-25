@@ -6,3 +6,4 @@ class Stages(Enum):
     information = 2
     consultation = 3
     off_top = 4
+    unknown = 5
