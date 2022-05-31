@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Чат</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <link href="/static/index.css" rel="stylesheet">
+
+</head>
+<body onload="initialPage()">
+<div class="row">
+    <div class="col-md-3">
+        <div class="content-background mb-3">
+            <div class="avatar">
+                <p>Егоров Мичил</p>
+                <p>284434</p>
+            </div>
+        </div>
+        <div class="content-background h-100">
+            <div class="avatar">
+                <p>Виртуальный ассистент</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6"
+         style="height: 100vh; max-height: 100vh; display: flex; flex-direction: column; justify-content: space-between">
+        <div class="mt-3 mb-3 time-box">
+            <span>Чат</span>
+        </div>
+        <div class="chat">
+            <div class="messages_container">
+                <div class="time-box">
+                    <span>Сегодня</span>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 message_write_container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="event_button" onclick="likeMessage()">
+                        <span class="icon"></span>
+                        <span class="event_name">Понравился ответ</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="event_button" onclick="dislikeMessage()">
+                        <span class="icon"></span>
+                        <span class="event_name">Не понравился ответ</span>
+                    </div>
+                </div>
+            </div>
+            <form onsubmit="sendMessage(); return false;">
+                <div class="input-group">
+                    <input id="message_input" type="text" class="form-control">
+                    <input class="btn btn-outline-info" type="submit" value="Отправить"/>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="mt-3 actions content-background h-100">
+            <h2> Взаимодействие </h2>
+            <div class="event_button">
+                <span class="icon"></span>
+                <span class="event_name"
+                      data-bs-title="Переключение на оператора"
+                      data-bs-action="switchToOperator()"
+                      data-bs-toggle="modal"
+                      data-bs-target="#reasonModal">
+                    Переключить на оператора
+                </span>
+            </div>
+            <div class="event_button">
+                <span class="icon"></span>
+                <span class="event_name"
+                      data-bs-title="Остановка общение"
+                      data-bs-action="breakConversation()"
+                      data-bs-toggle="modal"
+                      data-bs-target="#reasonModal">
+                    Остановить общение
+                </span>
+            </div>
+        </div>
+    </div>
+<!-- Modal -->
+    <div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div>
+                          <label for="reasonTextArea1" class="form-label">Расскажите причину, пожалуйста</label>
+                          <textarea class="form-control" id="reasonTextArea1" rows="3" required></textarea>
+                        </div>
+
+                        <div class="mt-3 d-flex flex-row-reverse">
+                            <button type="submit" class="btn btn-primary ms-3">Отправить</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+        crossorigin="anonymous"></script>
+
+<script>
+    function factorMessageDiv(text, from) {
+        let div = document.createElement('div');
+        div.classList.add('message');
+
+        if (from === 'user') {
+            div.classList.add('my-message');
+        }
+
+        let content_div = document.createElement('div');
+        content_div.classList.add('content')
+        content_div.innerText = text;
+
+        let time_div = document.createElement('div');
+        time_div.classList.add('message__time');
+        let current_date = new Date();
+        time_div.innerText = current_date.getHours() + ':' + current_date.getMinutes()
+
+        div.appendChild(content_div)
+        div.appendChild(time_div)
+
+        return div;
+    }
+
+    function postMessage(message, from) {
+        let messages_container = document.getElementsByClassName('messages_container')[0];
+        let message_div = factorMessageDiv(message, from);
+        let chat_div = document.getElementsByClassName('chat')[0]
+
+        let audio = new Audio('/static/notification.mp3');
+        audio.play();
+
+        messages_container.appendChild(message_div);
+        chat_div.scrollTop = chat_div.scrollHeight;
+
+    }
+
+    async function getResponse(message) {
+        let request = await fetch('http://127.0.0.1:8080/bot/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({
+                message: message,
+            })
+        })
+
+        return await request.json();
+    }
+
+    async function doAction(action_name) {
+        let request = await fetch('http://127.0.0.1:8080/bot/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({
+                action: action_name,
+            })
+        });
+
+        return await request.json();
+    }
+
+    async function likeMessage() {
+        let response = await doAction('like');
+        postMessage(response['message'], 'bot');
+    }
+
+    async function dislikeMessage() {
+        let response = await doAction('dislike');
+        postMessage(response['message'], 'bot');
+    }
+
+    async function switchToOperator() {
+        let response = await doAction('switch_to_operator');
+        postMessage(response['message'], 'bot');
+    }
+
+    async function breakConversation() {
+        let response = await doAction('break_conversation');
+        postMessage(response['message'], 'bot');
+    }
+
+
+    async function sendMessage() {
+        let message_input = document.getElementById('message_input');
+        let message = message_input.value;
+
+        if (message.length === 0) {
+            return;
+        }
+
+        postMessage(message, 'user');
+        let response = await getResponse(message);
+        postMessage(response['message'], 'bot');
+
+        message_input.value = "";
+    }
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function initialPage() {
+        postMessage('Привет!', 'bot')
+        await sleep(500)
+        postMessage('Если хочешь со мной чем нибудь поделитьcя, расскажи', 'bot')
+
+        const reasonModal = document.getElementById('reasonModal');
+
+        reasonModal.addEventListener('show.bs.modal', function (event) {
+          // Button that triggered the modal
+          const button = event.relatedTarget;
+          // Extract info from data-bs-* attributes
+          const title = button.getAttribute('data-bs-title');
+          const func = button.getAttribute('data-bs-action');
+          // If necessary, you could initiate an AJAX request here
+          // and then do the updating in a callback.
+          //
+          // Update the modal's content.
+          const modalTitle = reasonModal.querySelector('.modal-title');
+          const modalForm = reasonModal.querySelector('.modal-body form');
+
+          modalTitle.textContent = title;
+          modalForm.onsubmit = function (event) {
+              event.preventDefault();
+
+              let func_callable = Function(func);
+              func_callable();
+
+              bootstrap.Modal.getInstance(reasonModal).hide();
+
+              return false;
+          }
+        })
+    }
+</script>
+</body>
+</html>

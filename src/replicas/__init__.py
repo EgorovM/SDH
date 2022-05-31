@@ -22,7 +22,7 @@ class ReplicasContainer:
 
     def extend(self, sentences: List[str], event_types: List[Event]):
         replicas = [
-            Replica(sentence, Event.from_number(event_type))
+            Replica(sentence, event_type)
             for sentence, event_type in zip(sentences, event_types)
         ]
         self.replicas.extend(replicas)

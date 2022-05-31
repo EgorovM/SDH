@@ -12,6 +12,7 @@ class Symptom:
 
 class Disease:
     name: str
+    probability: float
     symptoms: List[Symptom]
 
     def __init__(self, name: str, symptoms: List[Symptom]) -> None:

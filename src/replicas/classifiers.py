@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Union, Tuple
 
 import numpy as np
 
@@ -27,7 +27,7 @@ class AbstractEventClassifier(ABC):
         )
 
 
-class CosineDistanceEventClassifier(AbstractEventClassifier):
+class NeighbourClassifier(AbstractEventClassifier):
     def __init__(self, sentence_vectorizer: AbstractVectorizer):
         super().__init__(sentence_vectorizer)
 
@@ -37,10 +37,13 @@ class CosineDistanceEventClassifier(AbstractEventClassifier):
     def fit(self, replicas: ReplicasContainer) -> None:
         self.replicas = replicas
 
-    def classify(self, replica: Replica) -> Event:
+    def classify(self, replica: Replica, return_score: bool = False) -> Union[Event, Tuple[Event, float]]:
         similars = [(r, self.similarity(r, replica)) for r in self.replicas]
         similars.sort(key=lambda x: x[1], reverse=True)
         replica, score = similars[0]
+
+        if return_score:
+            return replica.event, score
 
         return replica.event
 
@@ -54,8 +57,8 @@ class CosineDistanceEventClassifier(AbstractEventClassifier):
     def from_replicas_container(
         replicas: ReplicasContainer,
         sentence_vectorizer: AbstractVectorizer
-    ) -> 'CosineDistanceEventClassifier':
-        classifier = CosineDistanceEventClassifier(sentence_vectorizer)
+    ) -> 'NeighbourClassifier':
+        classifier = NeighbourClassifier(sentence_vectorizer)
         classifier.fit(replicas)
 
         return classifier
