@@ -127,6 +127,11 @@
 
         if (from === 'user') {
             div.classList.add('my-message');
+            div.classList.remove('message-waiting');
+        } else if (from == 'simulate') {
+            let spinner = document.createElement('div')
+            spinner.classList.add('message-simulation')
+            div.appendChild(spinner)
         }
 
         let content_div = document.createElement('div');
@@ -144,7 +149,7 @@
         return div;
     }
 
-    function postMessage(message, from) {
+    async function postMessage(message, from) {
         let messages_container = document.getElementsByClassName('messages_container')[0];
         let message_div = factorMessageDiv(message, from);
         let chat_div = document.getElementsByClassName('chat')[0]
@@ -154,7 +159,21 @@
 
         messages_container.appendChild(message_div);
         chat_div.scrollTop = chat_div.scrollHeight;
+    }
 
+    function botAnswered(message) {
+        // After removing class the array is reducing
+        let botMessages = [...document.getElementsByClassName('message-waiting')];
+
+        for(let message of botMessages) {
+            message.classList.remove('message-waiting');
+        }
+
+        let simulations = document.querySelectorAll('.message-simulation');
+        
+        simulations.forEach(box => {
+            box.parentNode.remove();
+        })
     }
 
     async function getResponse(message) {
@@ -205,7 +224,6 @@
         postMessage(response['message'], 'bot');
     }
 
-
     async function sendMessage() {
         let message_input = document.getElementById('message_input');
         let message = message_input.value;
@@ -215,8 +233,10 @@
         }
 
         postMessage(message, 'user');
+        postMessage('', 'simulate')
         let response = await getResponse(message);
         postMessage(response['message'], 'bot');
+        botAnswered();
 
         message_input.value = "";
     }
@@ -227,7 +247,8 @@
     async function initialPage() {
         postMessage('Привет!', 'bot')
         await sleep(500)
-        postMessage('Если хочешь со мной чем нибудь поделитьcя, расскажи', 'bot')
+        await postMessage('Если хочешь со мной чем нибудь поделитьcя, расскажи', 'bot')
+        botAnswered()
 
         const reasonModal = document.getElementById('reasonModal');
 

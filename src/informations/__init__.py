@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from replicas import ReplicasContainer, Replica
 from replicas.classifiers import AbstractEventClassifier, NeighbourClassifier
-from utils.vectorizer import AbstractVectorizer, SentenceTfIdfVectorizer
+from utils.vectorizer import AbstractVectorizer, SentenceTfIdfVectorizer, get_sentence_vectorizer
 
 
 class QuestionAnswer:
@@ -15,7 +15,7 @@ class QuestionAnswer:
         text_classifier: AbstractEventClassifier = None,
         sentence_vectorizer: AbstractVectorizer = None,
     ) -> None:
-        sentence_vectorizer = sentence_vectorizer or SentenceTfIdfVectorizer.default()
+        sentence_vectorizer = sentence_vectorizer or get_sentence_vectorizer()
 
         self.replicas = replicas
         self.text_classifier = text_classifier or NeighbourClassifier.from_replicas_container(
