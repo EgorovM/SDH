@@ -10,6 +10,7 @@ from sessions.scenarios import (
     ConversationBotHandler
 )
 from sessions.multilanguage import action_responses
+from utils.multilanguage import translate_word
 
 HANDLERS = {
     Stages.intro: EventClassificationHandler(),
@@ -96,10 +97,8 @@ class UserSession:
 
     def get_response(self, message: str) -> str:
         message = self.get_previous_message(message)
-
-        if self.language is None:
-            self.language = detect(message)
-
+        self.language = detect(message)
+        
         handler = HANDLERS[self.stage]
         response = handler.handle(message)
 
@@ -112,6 +111,9 @@ class UserSession:
         self.add_action(Action.message_action(response_message, stage=self.stage, author='bot'))
 
         self.stage = response.next_stage
+        
+        if self.language == 'en':
+            response_message = translate_word(response_message)
 
         return response_message
 

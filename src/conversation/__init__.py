@@ -24,6 +24,5 @@ class ConversationBot:
     def get_answer(self, message: str) -> str:
         replica = Replica.from_sentence(message)
         answer = self.classifier.classify(replica)
-        answer = translate_word(answer)
         
         return answer
