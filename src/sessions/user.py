@@ -1,6 +1,7 @@
 import datetime
 
 from typing import List
+from langdetect import detect
 from sessions.stages import Stages
 from sessions.scenarios import (
     EventClassificationHandler,
@@ -8,6 +9,7 @@ from sessions.scenarios import (
     InformationHandler,
     ConversationBotHandler
 )
+from sessions.multilanguage import action_responses
 
 HANDLERS = {
     Stages.intro: EventClassificationHandler(),
@@ -24,7 +26,7 @@ class Action:
             content: str = None,
             code: str = None,
             author: str = None,
-            timestamp: int = None
+            timestamp: int = None,
     ):
         self.code = code
         self.content = content
@@ -58,7 +60,7 @@ class Action:
             'content': self.content,
             'timestamp': self.timestamp,
             'author': self.author,
-            'stage': self.stage.name
+            'stage': self.stage.name,
         }
 
 
@@ -66,15 +68,16 @@ class UserSession:
     actions: List[Action]
     require_history_actions: List[Stages] = [Stages.consultation]
 
-    def __init__(self, user_id: int, stage=Stages.intro):
+    def __init__(self, user_id: int, stage: Stages = Stages.intro, language: str = None):
         self.user_id = user_id
         self.stage = stage
+        self.language = language
         self.actions = []
 
     def add_action(self, action: Action):
         self.actions.append(action)
 
-    def get_previous_message(self, message) -> str:
+    def get_previous_message(self, message: str) -> str:
         if self.stage in self.require_history_actions:
             previous_messages = []
 
@@ -93,45 +96,55 @@ class UserSession:
 
     def get_response(self, message: str) -> str:
         message = self.get_previous_message(message)
+
+        if self.language is None:
+            self.language = detect(message)
+
         handler = HANDLERS[self.stage]
         response = handler.handle(message)
 
+        if not isinstance(response.message, str):
+            response_message = response.message.get_response(self.language)
+        else:
+            response_message = response.message
+
         self.add_action(Action.message_action(message, stage=self.stage))
-        self.add_action(Action.message_action(response.message, stage=self.stage, author='bot'))
+        self.add_action(Action.message_action(response_message, stage=self.stage, author='bot'))
 
         self.stage = response.next_stage
 
-        return response.message
+        return response_message
 
     def process_action(self, action_name: str) -> str:
-        answer = 'Извините, я не знаю такого действия'
-
         if action_name == 'like':
             self.add_action(Action.like_action(self.stage))
-            answer = 'Спасибо, мы учтли!'
         elif action_name == 'dislike':
             self.add_action(Action.dislike_action(self.stage))
-            answer = 'Хорошо, мы учтем! Попытаемся исправится в следующем обновлении'
         elif action_name == 'switch_to_operator':
             self.add_action(Action.switch_to_operator_action(self.stage))
             self.stage = Stages.intro
-            answer = 'Хорошо, переключаю на оператора...'
         elif action_name == 'break_conversation':
             self.add_action(Action.break_action(self.stage))
             self.stage = Stages.intro
-            answer = 'Вы остановили общение. Хорошего дня!'
+        
+        response = action_responses.get(action_name, 'do_not_know')
+        if not isinstance(response, str):
+            response_message = response.get_response(self.language)
+        else:
+            response_message = response
 
         self.add_action(Action.message_action(
-            message=answer,
+            message=response_message,
             stage=self.stage,
             author='bot'
         ))
 
-        return answer
+        return response_message
 
     def serialize(self):
         return {
             'user_id': self.user_id,
+            'language': self.language,
             'stage': self.stage.name,
             'actions': [action.serialize() for action in self.actions],
         }
@@ -140,7 +153,8 @@ class UserSession:
     def from_json(json_content: dict) -> 'UserSession':
         user_session = UserSession(
             user_id=json_content['user_id'],
-            stage=Stages[json_content['stage']]
+            stage=Stages[json_content['stage']],
+            language=json_content['language']
         )
 
         for action_json in json_content['actions']:
@@ -149,7 +163,7 @@ class UserSession:
                 code=action_json['code'],
                 author=action_json.get('author', 'user'),
                 stage=Stages[action_json.get('stage', Stages.unknown.name)],
-                timestamp=action_json['timestamp']
+                timestamp=action_json['timestamp'],
             ))
 
         return user_session

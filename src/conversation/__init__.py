@@ -1,51 +1,29 @@
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+import pandas as pd
+import numpy as np
 
-tokenizer = AutoTokenizer.from_pretrained("Grossmend/rudialogpt3_medium_based_on_gpt2")
-model = AutoModelForCausalLM.from_pretrained("Grossmend/rudialogpt3_medium_based_on_gpt2")
-
-
-def get_length_param(text: str) -> str:
-    tokens_count = len(tokenizer.encode(text))
-    if tokens_count <= 15:
-        len_param = '1'
-    elif tokens_count <= 50:
-        len_param = '2'
-    elif tokens_count <= 256:
-        len_param = '3'
-    else:
-        len_param = '-'
-    return len_param
+from replicas import ReplicasContainer, Replica
+from replicas.classifiers import NeighbourClassifier
+from utils.vectorizer import get_sentence_vectorizer
+from utils.multilanguage import translate_word
 
 
 class ConversationBot:
     def __init__(self):
-        self.chat_history_ids = None
+        df = pd.read_csv('./conversation/data/good.tsv',  sep='\t')
+        np.random.seed(42)
+        df = df.sample(10)
+
+        replicas = ReplicasContainer([
+            Replica(row['context_0'], row['reply']) for row in df.iloc
+        ])
+        self.classifier = NeighbourClassifier.from_replicas_container(
+            replicas,
+            get_sentence_vectorizer()
+        )
 
     def get_answer(self, message: str) -> str:
-        new_user_input_ids = tokenizer.encode(
-            f"|0|{get_length_param(message)}|" + message + tokenizer.eos_token + "|1|1|", return_tensors="pt")
-
-        bot_input_ids = (
-            torch.cat([self.chat_history_ids, new_user_input_ids], dim=-1)
-            if self.chat_history_ids is not None
-            else new_user_input_ids
-        )
-
-        self.chat_history_ids = model.generate(
-            bot_input_ids,
-            num_return_sequences=1,
-            max_length=512,
-            no_repeat_ngram_size=3,
-            do_sample=True,
-            top_k=50,
-            top_p=0.9,
-            temperature=0.6,
-            mask_token_id=tokenizer.mask_token_id,
-            eos_token_id=tokenizer.eos_token_id,
-            unk_token_id=tokenizer.unk_token_id,
-            pad_token_id=tokenizer.pad_token_id,
-            device='cpu',
-        )
-
-        return tokenizer.decode(self.chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)
+        replica = Replica.from_sentence(message)
+        answer = self.classifier.classify(replica)
+        answer = translate_word(answer)
+        
+        return answer

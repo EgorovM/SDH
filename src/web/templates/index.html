@@ -17,25 +17,25 @@
     <div class="col-md-3">
         <div class="content-background mb-3">
             <div class="avatar">
-                <p>Егоров Мичил</p>
+                <p>Michil Egorov</p>
                 <p>284434</p>
             </div>
         </div>
         <div class="content-background h-100">
             <div class="avatar">
-                <p>Виртуальный ассистент</p>
+                <p>Virtual assistent</p>
             </div>
         </div>
     </div>
     <div class="col-md-6"
          style="height: 100vh; max-height: 100vh; display: flex; flex-direction: column; justify-content: space-between">
         <div class="mt-3 mb-3 time-box">
-            <span>Чат</span>
+            <span>Chat</span>
         </div>
         <div class="chat">
             <div class="messages_container">
                 <div class="time-box">
-                    <span>Сегодня</span>
+                    <span>Today</span>
                 </div>
             </div>
         </div>
@@ -44,45 +44,45 @@
                 <div class="col-md-6">
                     <div class="event_button" onclick="likeMessage()">
                         <span class="icon"></span>
-                        <span class="event_name">Понравился ответ</span>
+                        <span class="event_name">I like the response</span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="event_button" onclick="dislikeMessage()">
                         <span class="icon"></span>
-                        <span class="event_name">Не понравился ответ</span>
+                        <span class="event_name">I do not like the response</span>
                     </div>
                 </div>
             </div>
             <form onsubmit="sendMessage(); return false;">
                 <div class="input-group">
                     <input id="message_input" type="text" class="form-control">
-                    <input class="btn btn-outline-info" type="submit" value="Отправить"/>
+                    <input class="btn btn-outline-info" type="submit" value="Send"/>
                 </div>
             </form>
         </div>
     </div>
     <div class="col-md-3">
         <div class="mt-3 actions content-background h-100">
-            <h2> Взаимодействие </h2>
+            <h2> Actions </h2>
             <div class="event_button">
                 <span class="icon"></span>
                 <span class="event_name"
-                      data-bs-title="Переключение на оператора"
+                      data-bs-title="Switch to operator"
                       data-bs-action="switchToOperator()"
                       data-bs-toggle="modal"
                       data-bs-target="#reasonModal">
-                    Переключить на оператора
+                      Switch to operator
                 </span>
             </div>
             <div class="event_button">
                 <span class="icon"></span>
                 <span class="event_name"
-                      data-bs-title="Остановка общение"
+                      data-bs-title="Stop the conversation"
                       data-bs-action="breakConversation()"
                       data-bs-toggle="modal"
                       data-bs-target="#reasonModal">
-                    Остановить общение
+                    Stop the conversation
                 </span>
             </div>
         </div>
@@ -98,13 +98,13 @@
                 <div class="modal-body">
                     <form>
                         <div>
-                          <label for="reasonTextArea1" class="form-label">Расскажите причину, пожалуйста</label>
+                          <label for="reasonTextArea1" class="form-label">Please tell the reason</label>
                           <textarea class="form-control" id="reasonTextArea1" rows="3" required></textarea>
                         </div>
 
                         <div class="mt-3 d-flex flex-row-reverse">
-                            <button type="submit" class="btn btn-primary ms-3">Отправить</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary ms-3">Send</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </form>
                 </div>
@@ -245,9 +245,9 @@
     }
 
     async function initialPage() {
-        postMessage('Привет!', 'bot')
+        postMessage('Hi!', 'bot')
         await sleep(500)
-        await postMessage('Если хочешь со мной чем нибудь поделитьcя, расскажи', 'bot')
+        await postMessage('Tell me everything you want. I can make an appointment, answer to a question or just talk.', 'bot')
         botAnswered()
 
         const reasonModal = document.getElementById('reasonModal');

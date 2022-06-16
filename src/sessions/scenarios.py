@@ -9,6 +9,7 @@ from events import Event
 from events.classifiers import EventClassifier
 from informations import QuestionAnswer
 from sessions.stages import Stages
+from sessions.multilanguage import BotResponse, bot_responses
 
 
 information_question_answer = QuestionAnswer.default()
@@ -16,7 +17,7 @@ conversation_bot = ConversationBot()
 
 
 class Response:
-    def __init__(self, message: str, next_stage: Stages):
+    def __init__(self, message: BotResponse, next_stage: Stages):
         self.message = message
         self.next_stage = next_stage
 
@@ -59,15 +60,15 @@ class EventClassificationHandler(AbstractHandler):
     def get_human_readable(self, event: Event) -> str:
         # TODO: переписать, чтобы можно было вручную эти ответы добавлять
         if event == Event.OFF_TOP:
-            return 'Расскажите как дела?'
+            return bot_responses['start_off_top']
 
         if event == Event.CONSULTATION:
-            return 'Расскажите что вас беспокоит'
+            return bot_responses['start_consultation']
 
         if event == Event.INFORMATION:
-            return 'Вот похожий случай:'
+            return bot_responses['start_information']
 
-        return 'Извините, я вас не понимаю. Попробуйте, пожалуйста, уточнить вопрос :)'
+        return bot_responses['do_not_know']
 
     def handle(self, message: str) -> Response:
         event = self.classifier.predict(message)
@@ -97,11 +98,10 @@ class DiseaseClassificationHandler(AbstractHandler):
             symptoms_indexes = self.classifier.text_to_vector(message).toarray()[0]
             symptoms = compress(SYMPTOMS_NAMES, symptoms_indexes)
 
-            return (
-                f'У вас кажется {disease.name} с вероятностью {round(probability, 3)}.\n'
-                f'Вывод сделан на основе того, что у вас наблюдаются следующие симптомы: '
-                f'{", ".join([symptom for symptom in symptoms])}\n'
-                'Лечитесь, не болейте!'
+            return bot_responses['disease_review'].format(
+                disease_name=disease.name,
+                disease_probability=round(probability, 3),
+                symptoms_list=", ".join([symptom for symptom in symptoms])
             )
 
         symptom = self.classifier.find_symptom_to_ask(message)
@@ -128,7 +128,7 @@ class DiseaseClassificationHandler(AbstractHandler):
 
 class InformationHandler(AbstractHandler):
     def __init__(self):
-        self.score_threshold = 0.95
+        self.score_threshold = 0.85
 
     def handle(self, message: str) -> Response:
         response = Response(
@@ -140,11 +140,12 @@ class InformationHandler(AbstractHandler):
     def next_stage(self, *args, **kwargs) -> Stages:
         return Stages.intro
 
-    def get_human_readable(self, message) -> str:
+    def get_human_readable(self, message: str) -> str:
         answer, score = information_question_answer.predict(message)
+        print(score)
 
         if score < self.score_threshold:
-            return 'Я пока не знаю ответа на этот вопрос. Попробуйте позвонить по номеру...'
+            return bot_responses['cant_answer_information']
 
         return answer
 

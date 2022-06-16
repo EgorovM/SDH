@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 
 from laserembeddings import Laser
-from langdetect import detect
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
@@ -12,7 +11,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class AbstractVectorizer(ABC):
     @abstractmethod
-    def sentence2vec(self, sentence: str) -> np.array:
+    def sentence2vec(self, sentence: str, language: str = 'ru') -> np.array:
         pass
 
     @staticmethod
@@ -25,7 +24,7 @@ class SentenceTfIdfVectorizer(AbstractVectorizer):
     def __init__(self, vectorizer: TfidfVectorizer):
         self.vectorizer = vectorizer
 
-    def sentence2vec(self, sentence: str) -> np.array:
+    def sentence2vec(self, sentence: str, language: str = 'ru') -> np.array:
         return self.vectorizer.transform([sentence]).toarray()[0]
 
     @staticmethod
@@ -41,12 +40,10 @@ class LaserVectorizer(AbstractVectorizer):
     def __init__(self):
         self.laser = Laser()
 
-    def sentence2vec(self, sentence: str) -> np.array:
-        language = detect(sentence)
-
+    def sentence2vec(self, sentence: str, language: str = 'ru') -> np.array:
         embeddings = self.laser.embed_sentences(
             [sentence],
-            lang=language or 'en'
+            lang=language
         )
 
         return embeddings[0]

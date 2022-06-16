@@ -5,13 +5,13 @@ from typing import List, Tuple
 import numpy as np
 
 from diseases import Disease
-from diseases.symptoms import Symptom, SymptomsCollection
+from diseases.symptoms import Symptom, SymptomsCollection, DISEASE_VECTORIZER
 from utils.preprocessing import CachedNormalizer
 
 
 DISEASE_CLASSIFIER = joblib.load('./diseases/models/disease_clf.joblib')
 
-DISEASES = ['аппендицит', 'язва', 'энтерит', 'эзофагит', 'холицестит', 'орви', 'мигрень', 'подагра', 'грипп', 'гипертоническая болезнь']
+DISEASES = DISEASE_CLASSIFIER.classes_
 SYMPTOMS_WEIGHTS = DISEASE_CLASSIFIER.coef_
 
 
@@ -23,7 +23,7 @@ class DiseasesClassification:
 
     def __init__(self) -> None:
         self.normalizer = CachedNormalizer()
-        self.vectorizer = joblib.load('./diseases/models/vectorizer.joblib')
+        self.vectorizer = DISEASE_VECTORIZER
         self.clf = DISEASE_CLASSIFIER
 
     def text_to_vector(self, text: str) -> np.array:

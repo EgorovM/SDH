@@ -1,19 +1,27 @@
 from typing import List, Dict
-
 import joblib
 
 from diseases import Symptom
+from utils.multilanguage import translate_word, en_vectorizer
+
+
+def describe_symptom(name: str) -> Symptom:
+    # если английский
+    name = translate_word(name)
+    return Symptom(name, question=f'Do you feel \'{name}\'?')
 
 
 # получили с модели
+
 DISEASE_VECTORIZER = joblib.load('./diseases/models/vectorizer.joblib')
+en_vectorizer(DISEASE_VECTORIZER)
 SYMPTOMS_NAMES = DISEASE_VECTORIZER.get_feature_names_out()
 
 
 class SymptomsCollection:
     # TODO: расписать как будем спрашивать о наличиии для каждого
     symptoms: Dict[str, Symptom] = {
-        name: Symptom(name, question=f'Может у вас наблюдается \'{name}\'?')
+        name: describe_symptom(name)
         for name in SYMPTOMS_NAMES
     }
 

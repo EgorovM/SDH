@@ -35,13 +35,6 @@ class QuestionAnswer:
         replica_container = ReplicasContainer()
         replica_container.extend(df['question'], df['answer'])
 
-        vectorizer = TfidfVectorizer()
-        vectorizer.fit(df['question'])
-        sentence_vectorizer = SentenceTfIdfVectorizer(vectorizer)
-
-        event_classifier = QuestionAnswer(
-            replica_container,
-            sentence_vectorizer=sentence_vectorizer
-        )
+        event_classifier = QuestionAnswer(replica_container)
 
         return event_classifier
