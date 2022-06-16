@@ -13,7 +13,6 @@ certifi==2021.10.8
 cffi==1.15.0
 chardet==3.0.4
 charset-normalizer==2.0.12
-chatterbot-corpus==1.2.0
 click==8.1.2
 cymem==2.0.6
 DAWG-Python==0.7.2
