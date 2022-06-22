@@ -23,7 +23,7 @@ def bot():
 
     user_id = 1  # todo: from params
     user_session = get_user_session_by_id(db, user_id)
-
+    
     if not action:
         response = user_session.get_response(message)
     else:

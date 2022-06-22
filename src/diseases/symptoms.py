@@ -14,7 +14,7 @@ def describe_symptom(name: str) -> Symptom:
 # получили с модели
 
 DISEASE_VECTORIZER = joblib.load('./diseases/models/vectorizer.joblib')
-en_vectorizer(DISEASE_VECTORIZER)
+# en_vectorizer(DISEASE_VECTORIZER)
 SYMPTOMS_NAMES = DISEASE_VECTORIZER.get_feature_names_out()
 
 

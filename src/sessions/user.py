@@ -4,12 +4,13 @@ from typing import List
 from langdetect import detect
 from sessions.stages import Stages
 from sessions.scenarios import (
+    Response,
     EventClassificationHandler,
     DiseaseClassificationHandler,
     InformationHandler,
     ConversationBotHandler
 )
-from sessions.multilanguage import action_responses
+from sessions.multilanguage import action_responses, bot_responses
 from utils.multilanguage import translate_word
 
 HANDLERS = {
@@ -100,7 +101,14 @@ class UserSession:
         self.language = detect(message)
         
         handler = HANDLERS[self.stage]
-        response = handler.handle(message)
+        
+        try:
+            response = handler.handle(message)
+        except Exception as e:
+            response = Response(
+                message=bot_responses['internal_error'].format(error=e),
+                next_stage=self.stage
+            )
 
         if not isinstance(response.message, str):
             response_message = response.message.get_response(self.language)
@@ -130,8 +138,9 @@ class UserSession:
             self.stage = Stages.intro
         
         response = action_responses.get(action_name, 'do_not_know')
+
         if not isinstance(response, str):
-            response_message = response.get_response(self.language)
+            response_message = response.get_response(self.language or 'en')
         else:
             response_message = response
 

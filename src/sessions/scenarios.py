@@ -98,11 +98,17 @@ class DiseaseClassificationHandler(AbstractHandler):
             symptoms_indexes = self.classifier.text_to_vector(message).toarray()[0]
             symptoms = compress(SYMPTOMS_NAMES, symptoms_indexes)
 
-            return bot_responses['disease_review'].format(
+            disease_response = bot_responses['disease_review'].format(
                 disease_name=disease.name,
-                disease_probability=round(probability, 3),
-                symptoms_list=", ".join([symptom for symptom in symptoms])
+                disease_probability=int(round(probability, 2) * 100),
             )
+            detail_response = bot_responses.get(
+                f'{disease.name}_details', 
+                bot_responses['default_details']).format(
+                symptoms_list=', '.join(symptoms)
+            )
+
+            return disease_response + detail_response
 
         symptom = self.classifier.find_symptom_to_ask(message)
 
@@ -142,7 +148,6 @@ class InformationHandler(AbstractHandler):
 
     def get_human_readable(self, message: str) -> str:
         answer, score = information_question_answer.predict(message)
-        print(score)
 
         if score < self.score_threshold:
             return bot_responses['cant_answer_information']

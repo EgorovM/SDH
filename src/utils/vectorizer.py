@@ -54,4 +54,4 @@ class LaserVectorizer(AbstractVectorizer):
 
 
 def get_sentence_vectorizer():
-    return LaserVectorizer.default()
+    return SentenceTfIdfVectorizer.default()
