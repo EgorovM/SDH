@@ -21,13 +21,13 @@ def bot():
     message = params.get('message', '')
     action = params.get('action', None)
 
-    user_id = 1  # todo: from params
+    user_id = ':'.join([request.remote_addr, str(request.environ.get('REMOTE_PORT'))])
     user_session = get_user_session_by_id(db, user_id)
     
     if not action:
         response = user_session.get_response(message)
     else:
-        response = user_session.process_action(action)
+        response = user_session.process_action(message, action)
 
     insert_user_session(db, user_session)
 

@@ -48,10 +48,17 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="event_button" onclick="dislikeMessage()">
-                        <span class="icon"></span>
-                        <span class="event_name">I do not like the response</span>
-                    </div>
+                    <div class="event_button dropdown col-md-12">
+                        <a class="event_name dropdown-toggle col-md-12" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                          I don not like the response
+                        </a>
+                      
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario')">Wrong scenario</a></li>
+                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('rude_response')">Rude response</a></li>
+                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('dont_make_sense')">Don not make sense</a></li>
+                        </ul>
+                      </div>
                 </div>
             </div>
             <form onsubmit="sendMessage(); return false;">
@@ -192,7 +199,7 @@
         return await request.json();
     }
 
-    async function doAction(action_name) {
+    async function doAction(action_name, details) {
         let request = await fetch(`${host}/bot/`, {
             method: 'POST',
             headers: {
@@ -200,29 +207,30 @@
             },
             body: JSON.stringify({
                 action: action_name,
+                message: details
             })
         });
 
         return await request.json();
     }
 
-    async function likeMessage() {
-        let response = await doAction('like');
+    async function likeMessage(details='') {
+        let response = await doAction('like', details);
         postMessage(response['message'], 'bot');
     }
 
-    async function dislikeMessage() {
-        let response = await doAction('dislike');
+    async function dislikeMessage(details='') {
+        let response = await doAction('dislike', details);
         postMessage(response['message'], 'bot');
     }
 
-    async function switchToOperator() {
-        let response = await doAction('switch_to_operator');
+    async function switchToOperator(details='') {
+        let response = await doAction('switch_to_operator', details);
         postMessage(response['message'], 'bot');
     }
 
-    async function breakConversation() {
-        let response = await doAction('break_conversation');
+    async function breakConversation(details='') {
+        let response = await doAction('break_conversation', details);
         postMessage(response['message'], 'bot');
     }
 

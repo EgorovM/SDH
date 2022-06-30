@@ -78,7 +78,7 @@ body {
 }
 
 .event_button:hover {
-    color: white;
+    color: white !important;
     background-color: #6588DE;
     border: 1px solid white;
     cursor: pointer;
@@ -89,6 +89,7 @@ body {
     font-style: normal;
     font-weight: 500;
     font-size: 12px;
+    text-decoration: none;
 }
 
 .chat {

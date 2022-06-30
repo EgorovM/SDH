@@ -41,20 +41,20 @@ class Action:
         return Action(stage=stage, content=message, code='message', author=author)
 
     @staticmethod
-    def like_action(stage: Stages = None) -> 'Action':
-        return Action(stage=stage, code='like')
+    def like_action(content: str, stage: Stages = None) -> 'Action':
+        return Action(content=content, stage=stage, code='like')
 
     @staticmethod
-    def dislike_action(stage: Stages = None) -> 'Action':
-        return Action(stage=stage, code='dislike')
+    def dislike_action(content: str, stage: Stages = None) -> 'Action':
+        return Action(content=content, stage=stage, code='dislike')
 
     @staticmethod
-    def switch_to_operator_action(stage: Stages = None) -> 'Action':
-        return Action(stage=stage, code='switch_to_operator')
+    def switch_to_operator_action(content: str, stage: Stages = None) -> 'Action':
+        return Action(content=content, stage=stage, code='switch_to_operator')
 
     @staticmethod
-    def break_action(stage: Stages = None) -> 'Action':
-        return Action(stage=stage, code='break')
+    def break_action(content: str, stage: Stages = None) -> 'Action':
+        return Action(content=content, stage=stage, code='break')
 
     def serialize(self):
         return {
@@ -133,17 +133,20 @@ class UserSession:
 
         return response_message
 
-    def process_action(self, action_name: str) -> str:
+    def process_action(self, details: str, action_name: str) -> str:
         if action_name == 'like':
-            self.add_action(Action.like_action(self.stage))
+            self.add_action(Action.like_action(details, self.stage))
         elif action_name == 'dislike':
-            self.add_action(Action.dislike_action(self.stage))
+            self.add_action(Action.dislike_action(details, self.stage))
         elif action_name == 'switch_to_operator':
-            self.add_action(Action.switch_to_operator_action(self.stage))
+            self.add_action(Action.switch_to_operator_action(details, self.stage))
             self.stage = Stages.intro
         elif action_name == 'break_conversation':
-            self.add_action(Action.break_action(self.stage))
+            self.add_action(Action.break_action(details, self.stage))
             self.stage = Stages.intro
+        
+        if action_name == 'dislike':
+            action_name = '_'.join([action_name, details])
         
         response = action_responses.get(action_name, 'do_not_know')
 

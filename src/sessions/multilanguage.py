@@ -156,6 +156,18 @@ action_responses = {
         ru_='Хорошо, мы учтем! Попытаемся исправится в следующем обновлении',
         en_='Okay, thanks! We will try to fix it.'
     ),
+    'dislike_rude_response': BotResponse(
+        ru_='Извините пожалуйста, мы попытаемся исправить грубое поведение.',
+        en_='Okay, thanks! We will try to fix it.'
+    ),
+    'dislike_dont_make_sense': BotResponse(
+        ru_='Я вас понял, примем к сведению',
+        en_='Okay, thanks! We will try to fix it.'
+    ),
+    'dislike_wrong_scenario': BotResponse(
+        ru_='Хорошо, мы непременно исправим этот недочет',
+        en_='Okay, thanks! We will try to fix it.'
+    ),
     'switch_to_operator': BotResponse(
         ru_='Переключаем на оператора.',
         en_='We are switching you to the operator.'
