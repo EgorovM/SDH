@@ -26,11 +26,11 @@ class BotResponse:
         return {}
 
     def get_response(self, language: str = 'ru') -> str:
-        content_attribute = 'en_' if language is None else language + '_'
+        content_attribute = 'ru_' if language is None else language + '_'
         content = getattr(self, content_attribute, None)
 
         if not content:
-            content = getattr(self, 'en_', None) or getattr(self, 'ru_')
+            content = getattr(self, 'ru_', None) or getattr(self, 'en_')
         
         if isinstance(content, list):
             content = random.choice(content)
