@@ -26,7 +26,7 @@ class BotResponse:
         return {}
 
     def get_response(self, language: str = 'ru') -> str:
-        content_attribute = 'ru_' if language is None else language + '_'
+        content_attribute = language or '' + '_'
         content = getattr(self, content_attribute, None)
 
         if not content:

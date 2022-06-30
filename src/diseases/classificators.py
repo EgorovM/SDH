@@ -48,7 +48,6 @@ class DiseasesClassification:
         diseases_probability = self.clf.predict_proba(vector)
 
         # обнуляем вероятности для except_diseases
-
         diseases_probability = [
             diseases_probability[0][i] * int(DISEASES[i] not in except_diseases)
             for i in range(len(diseases_probability[0]))

@@ -1,0 +1,1 @@
+utils/models/ruscorpora_upos_skipgram_300_5_2018.vec.gz filter=lfs diff=lfs merge=lfs -text

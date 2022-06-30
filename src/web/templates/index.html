@@ -121,6 +121,8 @@
         crossorigin="anonymous"></script>
 
 <script>
+    var host = 'http://127.0.0.1:8080';
+
     function factorMessageDiv(text, from) {
         let div = document.createElement('div');
         div.classList.add('message');
@@ -177,7 +179,7 @@
     }
 
     async function getResponse(message) {
-        let request = await fetch('http://194.58.102.189:8080/bot/', {
+        let request = await fetch(`${host}/bot/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -191,7 +193,7 @@
     }
 
     async function doAction(action_name) {
-        let request = await fetch('http://194.58.102.189:8080/bot/', {
+        let request = await fetch(`${host}/bot/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
