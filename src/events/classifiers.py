@@ -1,10 +1,10 @@
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from events import Event
 from replicas import ReplicasContainer, Replica
-
 from replicas.classifiers import AbstractEventClassifier, NeighbourClassifier
-from utils.vectorizer import AbstractVectorizer, get_sentence_vectorizer
+from utils.vectorizer import AbstractVectorizer, SentenceTfIdfVectorizer, get_sentence_vectorizer
 
 
 class EventClassifier:
@@ -35,9 +35,12 @@ class EventClassifier:
         question_df['реплика'] = question_df['question']
         df = pd.concat([df, question_df])
 
+        vectorizer = TfidfVectorizer()
+        vectorizer.fit(df['реплика'])
+        vectorizer = SentenceTfIdfVectorizer(vectorizer)
+
         replica_container = ReplicasContainer()
         replica_container.extend(df['реплика'], list(map(Event.from_number, df['класс'])))
-
-        event_classifier = EventClassifier(replica_container)
+        event_classifier = EventClassifier(replica_container, sentence_vectorizer=vectorizer)
 
         return event_classifier

@@ -22,8 +22,9 @@ class AbstractEventClassifier(ABC):
         pass
 
     def as_vector(self, replica) -> np.array:
+        sentence = self.sentence_vectorizer.normalizer.normalize([replica.sentence])[0]
         return self.sentence_vectorizer.sentence2vec(
-            sentence=replica.sentence
+            sentence=sentence
         )
 
 
