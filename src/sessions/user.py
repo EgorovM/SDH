@@ -70,14 +70,22 @@ class UserSession:
     actions: List[Action]
     require_history_actions: List[Stages] = [Stages.consultation]
 
-    def __init__(self, user_id: int, stage: Stages = Stages.intro, language: str = None):
+    def __init__(self, user_id: int, stage: Stages = Stages.intro, language: str = None, meta_info: dict = {}):
         self.user_id = user_id
         self.stage = stage
         self.language = language
+        self.meta_info = meta_info
+
         self.actions = []
 
     def add_action(self, action: Action):
         self.actions.append(action)
+
+    def add_meta(self, key: str, value) -> None:
+        self.meta_info[key] = value
+
+    def get_meta(self, key: str):
+        return self.meta_info[key]
 
     def get_previous_message(self, message: str) -> str:
         if self.stage in self.require_history_actions:
@@ -158,6 +166,7 @@ class UserSession:
             'language': self.language,
             'stage': self.stage.name,
             'actions': [action.serialize() for action in self.actions],
+            'meta_info': self.meta_info
         }
 
     @staticmethod
@@ -165,7 +174,8 @@ class UserSession:
         user_session = UserSession(
             user_id=json_content['user_id'],
             stage=Stages[json_content['stage']],
-            language=json_content['language']
+            language=json_content['language'],
+            meta_info=json_content['meta_info']
         )
 
         for action_json in json_content['actions']:

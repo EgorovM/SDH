@@ -37,7 +37,9 @@ class NeighbourClassifier(AbstractEventClassifier):
 
     def fit(self, replicas: ReplicasContainer) -> None:
         self.replicas = replicas
-        self.vectors = [self.as_vector(replica) for replica in replicas]
+        self.vectors = self.sentence_vectorizer.batch_sentence2vec([
+            replica.sentence for replica in replicas
+        ])
 
     def classify(self, replica: Replica, return_score: bool = False) -> Union[Event, Tuple[Event, float]]:
         if self.vectors is None:

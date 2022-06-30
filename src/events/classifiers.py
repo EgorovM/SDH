@@ -4,7 +4,7 @@ from events import Event
 from replicas import ReplicasContainer, Replica
 
 from replicas.classifiers import AbstractEventClassifier, NeighbourClassifier
-from utils.vectorizer import AbstractVectorizer, get_sentence_vectorizer
+from utils.vectorizer import AbstractVectorizer, Word2VecVectorizer
 
 
 class EventClassifier:
@@ -14,7 +14,7 @@ class EventClassifier:
         text_classifier: AbstractEventClassifier = None,
         sentence_vectorizer: AbstractVectorizer = None,
     ) -> None:
-        sentence_vectorizer = sentence_vectorizer or get_sentence_vectorizer()
+        sentence_vectorizer = sentence_vectorizer or Word2VecVectorizer.default()
 
         self.replicas = replicas
         self.event_classifier = text_classifier or NeighbourClassifier.from_replicas_container(
