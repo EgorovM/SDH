@@ -4,7 +4,7 @@ This repository introduces the research dedicated to build intelligent multimoda
 
 This development will be used to interact with respondents. Thus we are planning to develop a universal chatbot for health monitoring and routine communication with patients based on insights received from users.
 
-The project is supported by the [e-Government Center](egov.itmo.ru) (ITMO University).
+The project is supported by the [e-Government Center](https://egov.itmo.ru) (ITMO University).
 
 Project Manager & Senior Analyst - [Anna Chizhik](https://github.com/Frantsuzova) (St. Petersburg State University)
 
