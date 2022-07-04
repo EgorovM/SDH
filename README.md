@@ -12,4 +12,4 @@ Developer - [Michil Egorov](https://github.com/EgorovM) (ITMO)
 
 Analyst - Svetlana Melnikova (ITMO)
 
-If you want to participate in experiments, please contact us by [mail](a.chizhik@spbu.ru).
+If you want to participate in experiments, please contact us by [mail](mailto:a.chizhik@spbu.ru).
