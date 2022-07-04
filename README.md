@@ -7,7 +7,9 @@ This development will be used to interact with respondents. Thus we are planning
 The project is supported by the [e-Government Center](egov.itmo.ru) (ITMO University).
 
 Project Manager & Senior Analyst - [Anna Chizhik](https://github.com/Frantsuzova) (St. Petersburg State University)
+
 Developer - [Michil Egorov](https://github.com/EgorovM) (ITMO)
+
 Analyst - Svetlana Melnikova (ITMO)
 
 If you want to participate in experiments, please contact us by [mail](a.chizhik@spbu.ru).
