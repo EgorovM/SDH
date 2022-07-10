@@ -104,6 +104,10 @@ class UserSession:
 
         return message
 
+    def _add_current_stage(self, message: str) -> str:
+        message = f"(Сейчас мы в сценарии {self.stage})<br>" + message
+        return message
+        
     def get_response(self, message: str) -> str:
         message = self.get_previous_message(message)
         self.language = detect(message)
@@ -126,10 +130,12 @@ class UserSession:
         self.add_action(Action.message_action(message, stage=self.stage))
         self.add_action(Action.message_action(response_message, stage=self.stage, author='bot'))
 
+        response_message = self._add_current_stage(response_message)
+
         self.stage = response.next_stage
         
-        if self.language == 'en':
-            response_message = translate_word(response_message)
+        # if self.language == 'en':
+        #     response_message = translate_word(response_message)
 
         return response_message
 

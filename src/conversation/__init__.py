@@ -9,7 +9,7 @@ from utils.multilanguage import translate_word
 
 class ConversationBot:
     def __init__(self):
-        df = pd.read_csv('./conversation/data/good.tsv',  sep='\t')
+        df = pd.read_csv('./conversation/data/good.tsv',  sep='\t')[:100]
 
         replicas = ReplicasContainer([
             Replica(row['context_0'], row['reply']) for row in df.iloc
