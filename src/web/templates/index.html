@@ -17,25 +17,25 @@
     <div class="col-md-3">
         <div class="content-background mb-3">
             <div class="avatar">
-                <p>Michil Egorov</p>
+                <p>Мичил Егоров</p>
                 <p>284434</p>
             </div>
         </div>
         <div class="content-background h-100">
             <div class="avatar">
-                <p>Virtual assistent</p>
+                <p>Виртуальный ассистент</p>
             </div>
         </div>
     </div>
     <div class="col-md-6"
          style="height: 100vh; max-height: 100vh; display: flex; flex-direction: column; justify-content: space-between">
         <div class="mt-3 mb-3 time-box">
-            <span>Chat</span>
+            <span>Чат</span>
         </div>
         <div class="chat">
             <div class="messages_container">
                 <div class="time-box">
-                    <span>Today</span>
+                    <span>Сегодня</span>
                 </div>
             </div>
         </div>
@@ -44,19 +44,24 @@
                 <div class="col-md-6">
                     <div class="event_button" onclick="likeMessage()">
                         <span class="icon"></span>
-                        <span class="event_name">I like the response</span>
+                        <span class="event_name">Мне понравился ответ</span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="event_button dropdown col-md-12">
                         <a class="event_name dropdown-toggle col-md-12" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                          I don not like the response
+                          Мне не понравился ответ
                         </a>
                       
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario')">Wrong scenario</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('rude_response')">Rude response</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('dont_make_sense')">Don not make sense</a></li>
+                          <li><span class="dropdown-item disabled">Неверный сценарий</span></li>
+                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_physician')">Я хотел записаться к врачу</a></li>
+                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_conversation')">Я хотел поболтать</a></li>
+                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_question')">Я хотел получить ответ на вопрос</a></li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li><span class="dropdown-item disabled">Не тот ответ</span></li>
+                        <li><a class="dropdown-item" href="#" onclick="dislikeMessage('rude_response')">Грубый ответ</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="dislikeMessage('dont_make_sense')">Ответ не имеет смысла</a></li>
                         </ul>
                       </div>
                 </div>
@@ -292,15 +297,11 @@
         })
 
         reasonModal.addEventListener('show.bs.modal', function (event) {
-          // Button that triggered the modal
           const button = event.relatedTarget;
-          // Extract info from data-bs-* attributes
+
           const title = button.getAttribute('data-bs-title');
           const func = button.getAttribute('data-bs-action');
-          // If necessary, you could initiate an AJAX request here
-          // and then do the updating in a callback.
-          //
-          // Update the modal's content.
+
           const modalTitle = reasonModal.querySelector('.modal-title');
           const modalForm = reasonModal.querySelector('.modal-body form');
 

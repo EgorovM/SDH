@@ -164,8 +164,16 @@ action_responses = {
         ru_='Я вас понял, примем к сведению',
         en_='Okay, thanks! We will try to fix it.'
     ),
-    'dislike_wrong_scenario': BotResponse(
-        ru_='Хорошо, мы непременно исправим этот недочет',
+    'dislike_wrong_scenario_physician': BotResponse(
+        ru_='Хорошо, попробуйте пожалуйста нажать на кнопку "Записаться к врачу"',
+        en_='Okay, thanks! We will try to fix it.'
+    ),
+    'dislike_wrong_scenario_conversation': BotResponse(
+        ru_='Хорошо, попробуйте пожалуйста нажать на кнопку "Переключиться на режим болталки"',
+        en_='Okay, thanks! We will try to fix it.'
+    ),
+    'dislike_wrong_scenario_question': BotResponse(
+        ru_='Мы в следующий раз добавим ответ на этот вопрос',
         en_='Okay, thanks! We will try to fix it.'
     ),
     'switch_to_operator': BotResponse(
