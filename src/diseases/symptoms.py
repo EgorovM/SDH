@@ -8,7 +8,7 @@ from utils.multilanguage import translate_word, en_vectorizer
 def describe_symptom(name: str) -> Symptom:
     # если английский
     name = translate_word(name)
-    return Symptom(name, question=f'Do you feel \'{name}\'?')
+    return Symptom(name, question=f'Чувствуете ли вы \'{name}\'?')
 
 
 # получили с модели
