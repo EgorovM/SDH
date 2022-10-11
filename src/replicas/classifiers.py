@@ -23,9 +23,7 @@ class AbstractEventClassifier(ABC):
 
     def as_vector(self, replica) -> np.array:
         sentence = self.sentence_vectorizer.normalizer.normalize([replica.sentence])[0]
-        return self.sentence_vectorizer.sentence2vec(
-            sentence=sentence
-        )
+        return self.sentence_vectorizer.sentence2vec(sentence=sentence)
 
 
 class NeighbourClassifier(AbstractEventClassifier):
@@ -38,16 +36,20 @@ class NeighbourClassifier(AbstractEventClassifier):
 
     def fit(self, replicas: ReplicasContainer) -> None:
         self.replicas = replicas
-        self.vectors = self.sentence_vectorizer.batch_sentence2vec([
-            replica.sentence for replica in replicas
-        ])
+        self.vectors = self.sentence_vectorizer.batch_sentence2vec(
+            [replica.sentence for replica in replicas]
+        )
 
-    def classify(self, replica: Replica, return_score: bool = False) -> Union[Event, Tuple[Event, float]]:
+    def classify(
+        self, replica: Replica, return_score: bool = False
+    ) -> Union[Event, Tuple[Event, float]]:
         if self.vectors is None:
-            raise Exception('fit not called yet')
+            raise Exception("fit not called yet")
 
         similars = cosine_similarity([self.as_vector(replica)], self.vectors)[0]
-        similars = sorted(zip(self.replicas, similars), key=lambda x: x[1], reverse=True)
+        similars = sorted(
+            zip(self.replicas, similars), key=lambda x: x[1], reverse=True
+        )
         replica, score = similars[0]
 
         if return_score:
@@ -57,9 +59,8 @@ class NeighbourClassifier(AbstractEventClassifier):
 
     @staticmethod
     def from_replicas_container(
-        replicas: ReplicasContainer,
-        sentence_vectorizer: AbstractVectorizer
-    ) -> 'NeighbourClassifier':
+        replicas: ReplicasContainer, sentence_vectorizer: AbstractVectorizer
+    ) -> "NeighbourClassifier":
         classifier = NeighbourClassifier(sentence_vectorizer)
         classifier.fit(replicas)
 

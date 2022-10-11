@@ -18,9 +18,12 @@ class QuestionAnswer:
         sentence_vectorizer = sentence_vectorizer or get_sentence_vectorizer()
 
         self.replicas = replicas
-        self.text_classifier = text_classifier or NeighbourClassifier.from_replicas_container(
-            self.replicas,
-            sentence_vectorizer,
+        self.text_classifier = (
+            text_classifier
+            or NeighbourClassifier.from_replicas_container(
+                self.replicas,
+                sentence_vectorizer,
+            )
         )
 
     def predict(self, sentence: str) -> Tuple[str, float]:
@@ -30,10 +33,10 @@ class QuestionAnswer:
         return answer, score
 
     @staticmethod
-    def default() -> 'QuestionAnswer':
-        df = pd.read_csv('./informations/data/question_answer.csv', sep=';')
+    def default() -> "QuestionAnswer":
+        df = pd.read_csv("./informations/data/question_answer.csv", sep=";")
         replica_container = ReplicasContainer()
-        replica_container.extend(df['question'], df['answer'])
+        replica_container.extend(df["question"], df["answer"])
 
         event_classifier = QuestionAnswer(replica_container)
 

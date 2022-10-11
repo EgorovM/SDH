@@ -9,7 +9,7 @@ from diseases.symptoms import Symptom, SymptomsCollection, DISEASE_VECTORIZER
 from utils.preprocessing import CachedNormalizer
 
 
-DISEASE_CLASSIFIER = joblib.load('./diseases/models/disease_clf.joblib')
+DISEASE_CLASSIFIER = joblib.load("./diseases/models/disease_clf.joblib")
 
 DISEASES = DISEASE_CLASSIFIER.classes_
 SYMPTOMS_WEIGHTS = DISEASE_CLASSIFIER.coef_
@@ -27,8 +27,8 @@ class DiseasesClassification:
         self.clf = DISEASE_CLASSIFIER
 
     def text_to_vector(self, text: str) -> np.array:
-        text = re.sub('[^A-Za-zА-Яа-я]', ' ', text)
-        text = ' '.join([w for w in text.split() if len(w) > 1])
+        text = re.sub("[^A-Za-zА-Яа-я]", " ", text)
+        text = " ".join([w for w in text.split() if len(w) > 1])
         text = self.normalizer.normalize([text])
         vector = self.vectorizer.transform(text)
         return vector
@@ -42,8 +42,10 @@ class DiseasesClassification:
 
         return disease, probability
 
-    def find_symptom_to_ask(self, text: str, except_diseases: List[str] = []) -> List[Symptom]:
-        """ Самые первые симптомы из каждой болезни """
+    def find_symptom_to_ask(
+        self, text: str, except_diseases: List[str] = []
+    ) -> List[Symptom]:
+        """Самые первые симптомы из каждой болезни"""
         vector = self.text_to_vector(text)
         diseases_probability = self.clf.predict_proba(vector)
 
@@ -59,7 +61,7 @@ class DiseasesClassification:
             for token, impact, already_mentioned in zip(
                 self.vectorizer.get_feature_names_out(),
                 SYMPTOMS_WEIGHTS[ask_for_id],
-                vector.toarray()[0]
+                vector.toarray()[0],
             )
             if not already_mentioned
         ]

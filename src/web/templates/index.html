@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Чат</title>
+    <title>{{chat}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
@@ -17,25 +17,25 @@
     <div class="col-md-3">
         <div class="content-background mb-3">
             <div class="avatar">
-                <p>Мичил Егоров</p>
+                <p>Michil Egorov</p>
                 <p>284434</p>
             </div>
         </div>
         <div class="content-background h-100">
             <div class="avatar">
-                <p>Виртуальный ассистент</p>
+                <p>{{virtual_assistent}}</p>
             </div>
         </div>
     </div>
     <div class="col-md-6"
          style="height: 100vh; max-height: 100vh; display: flex; flex-direction: column; justify-content: space-between">
         <div class="mt-3 mb-3 time-box">
-            <span>Чат</span>
+            <span>{{chat}}</span>
         </div>
         <div class="chat">
             <div class="messages_container">
                 <div class="time-box">
-                    <span>Сегодня</span>
+                    <span>{{today}}</span>
                 </div>
             </div>
         </div>
@@ -44,24 +44,24 @@
                 <div class="col-md-6">
                     <div class="event_button" onclick="likeMessage()">
                         <span class="icon"></span>
-                        <span class="event_name">Мне понравился ответ</span>
+                        <span class="event_name">{{like_message}}</span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="event_button dropdown col-md-12">
                         <a class="event_name dropdown-toggle col-md-12" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                          Мне не понравился ответ
+                          {{do_not_like_message}}
                         </a>
                       
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <li><span class="dropdown-item disabled">Неверный сценарий</span></li>
-                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_physician')">Я хотел записаться к врачу</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_conversation')">Я хотел поболтать</a></li>
-                          <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_question')">Я хотел получить ответ на вопрос</a></li>
-                          <li><hr class="dropdown-divider"></li>
-                          <li><span class="dropdown-item disabled">Не тот ответ</span></li>
-                        <li><a class="dropdown-item" href="#" onclick="dislikeMessage('rude_response')">Грубый ответ</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="dislikeMessage('dont_make_sense')">Ответ не имеет смысла</a></li>
+                            <li><span class="dropdown-item disabled">{{wrong_scenario}}</span></li>
+                            <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_physician')">{{wrong_scenario_physician}}</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_conversation')">{{wrong_scenario_conversation}}</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="dislikeMessage('wrong_scenario_question')">{{wrong_scenario_question}}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><span class="dropdown-item disabled">{{wrong_response}}</span></li>
+                            <li><a class="dropdown-item" href="#" onclick="dislikeMessage('rude_response')">{{do_not_like_message_rude_response}}</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="dislikeMessage('dont_make_sense')">{{do_not_like_message_unsense_response}}</a></li>
                         </ul>
                       </div>
                 </div>
@@ -84,7 +84,28 @@
                       data-bs-action="switchToOperator()"
                       data-bs-toggle="modal"
                       data-bs-target="#reasonModal">
-                      Переключить к оператору
+                      {{switch_to_operator}}
+                </span>
+            </div>
+            <div class="event_button">
+                <span class="icon"></span>
+                <span class="event_name"
+                    onclick="breakConversation(); sendMessage('{{hello_message}}')">
+                    {{switch_to_conversation}}
+                </span>
+            </div>
+            <div class="event_button">
+                <span class="icon"></span>
+                <span class="event_name"
+                    onclick="breakConversation(); sendMessage('{{i_would_like_to_make_an_appointment}}')">
+                    {{switch_to_appointment}}
+                </span>
+            </div>
+            <div class="event_button">
+                <span class="icon"></span>
+                <span class="event_name"
+                    onclick="breakConversation(); sendMessage('{{how_to_get_hospital}}')">
+                    {{get_info}}
                 </span>
             </div>
             <div class="event_button">
@@ -94,28 +115,7 @@
                       data-bs-action="breakConversation()"
                       data-bs-toggle="modal"
                       data-bs-target="#reasonModal">
-                    Остановить общение
-                </span>
-            </div>
-            <div class="event_button">
-                <span class="icon"></span>
-                <span class="event_name"
-                    onclick="breakConversation(); sendMessage('Привет, как дела?')">
-                    Переключиться на режим болталки
-                </span>
-            </div>
-            <div class="event_button">
-                <span class="icon"></span>
-                <span class="event_name"
-                    onclick="breakConversation(); sendMessage('Хочу записаться к врачу')">
-                    Записаться к врачу
-                </span>
-            </div>
-            <div class="event_button">
-                <span class="icon"></span>
-                <span class="event_name"
-                    onclick="breakConversation(); sendMessage('Как добраться до больницы?')">
-                    Получить информацию
+                      {{break_conversation}}
                 </span>
             </div>
         </div>
@@ -203,6 +203,10 @@
         chat_div.scrollTop = chat_div.scrollHeight;
     }
 
+    function get_language() {
+        return "en"
+    }
+
     function botAnswered(message) {
         // After removing class the array is reducing
         let botMessages = [...document.getElementsByClassName('message-waiting')];
@@ -226,6 +230,7 @@
             },
             body: JSON.stringify({
                 message: message,
+                language: get_language(),
             })
         })
 
@@ -240,7 +245,8 @@
             },
             body: JSON.stringify({
                 action: action_name,
-                message: details
+                message: details,
+                language: get_language(),
             })
         });
 
@@ -288,6 +294,9 @@
     function initModal() {
         const reasonModal = document.getElementById('reasonModal');
         const messageInput = document.getElementById('message-form');
+        const form = document.getElementById("message-form");
+
+        form.addEventListener('submit', (event) => event.preventDefault());
 
         messageInput.addEventListener('submit', function (event) { 
             let message_input = document.getElementById('message_input');
@@ -331,17 +340,9 @@
     }
 
     async function initialPage() {
-        postMessage('Привет!', 'bot')
+        postMessage('{{hi_message}}!', 'bot')
         await sleep(500)
-        await postMessage(`Я умный бот, который может вас записать к врачу, <br>
-            дать ответ на интересующий вопрос или просто поболтать. <br>
-            Общайтесь со мной как бы вы общались с колл-центром. <br>
-            Если я не могу ответить на вопрос - нажите на кнопку 'Переключить к оператору' <br>
-            Если хотите остановить сценарий - нажмите на кнопку 'Остановить общение' <br>
-            Я умею отвечать на очень базовые вопросы, по типу <a href="#" onclick="breakConversation(); sendMessage('Как добраться до больницы?')">"Где находиться больница?"</a><br>
-            Так же, если вы попросите меня записать к врачу: <a href="#" onclick="breakConversation(); sendMessage('Хочу записаться к врачу')">"Хочу записаться к врачу"</a>, то я начну собирать симптомы. <br>
-            Если же, вы захотите начать общение: <a href="#" onclick="breakConversation(); sendMessage('Привет, как дела?')">"Привет, как дела"</a> - я вас пойму. <br>
-        `, 'bot')
+        await postMessage(`{{initial_message|safe}}`, 'bot')
         botAnswered()
         await initPreviousMessages()
         initModal()

@@ -12,7 +12,7 @@ class Replica:
         return self.sentence.__hash__()
 
     @staticmethod
-    def from_sentence(sentence: str) -> 'Replica':
+    def from_sentence(sentence: str) -> "Replica":
         return Replica(sentence, Event.OFF_TOP)
 
 

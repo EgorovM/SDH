@@ -2,7 +2,8 @@ from collections import namedtuple
 from googletrans import Translator
 
 
-moke_translate = namedtuple('Translate', ['text'])
+moke_translate = namedtuple("Translate", ["text"])
+
 
 class MokeTranslator:
     def translate(self, word: str) -> str:
